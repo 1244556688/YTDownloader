@@ -23,9 +23,6 @@ jobs:
           Xvfb :99 -screen 0 1024x768x16 &
           export DISPLAY=:99
           python3 main.py
-          
-      - name: 顯示 IP
-        run: | 
           curl ifconfig.me
            
       - name: 啟動 x11vnc
