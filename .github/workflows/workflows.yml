@@ -1,41 +1,37 @@
-name: Run GUI Python via VNC
+name: Build EXE
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  gui-python:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: windows-latest
 
     steps:
-      - name: 下載程式碼
-        uses: actions/checkout@v4
+      # 下載程式碼
+      - uses: actions/checkout@v4
 
-      - name: 安裝必要套件
+      # 安裝 Python
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      # 安裝套件
+      - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y python3 python3-pip ffmpeg  xvfb x11vnc python3-tk
-          pip install -r requirements.txt
-      - name: 安裝並啟動 ngrok
+          python -m pip install --upgrade pip
+          pip install customtkinter yt-dlp pyinstaller
+
+      # 打包 exe
+      - name: Build EXE
         run: |
-          wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
-          tar xvzf ngrok-v3-stable-linux-amd64.tgz
+          pyinstaller --noconsole --onefile main.py
 
-          chmod +x ngrok
-
-          ./ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
-
-          ./ngrok tcp 5900 &
-          sleep 5
-
-          curl http://127.0.0.1:4040/api/tunnels
-      - name: 啟動虛擬桌面
-        run: |
-           Xvfb :99 -screen 0 1024x768x16 &
-           export DISPLAY=:99
-           python3 main.py
-           
-      - name: 啟動 x11vnc
-        run: |
-          x11vnc -display :99 -forever -nopw -listen 0.0.0.0 -xkb &
+      # 上傳 exe 作為 artifact
+      - name: Upload EXE
+        uses: actions/upload-artifact@v3
+        with:
+          name: YTDownloader-exe
+          path: dist/main.exe
