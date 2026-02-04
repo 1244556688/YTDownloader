@@ -17,13 +17,20 @@ jobs:
           sudo apt update
           sudo apt install -y python3 python3-pip ffmpeg  xvfb x11vnc python3-tk
           pip install -r requirements.txt
-      - run: |
-          curl ifconfig.me
+
+      - name: 安裝 ngrok
+        run: |
+          wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
+          tar xvzf ngrok-v3-stable-linux-amd64.tgz
+
+      - name: 開 ngrok
+        run: |
+           ./ngrok tcp 5900
       - name: 啟動虛擬桌面
         run: |
-          Xvfb :99 -screen 0 1024x768x16 &
-          export DISPLAY=:99
-          python3 main.py
+           Xvfb :99 -screen 0 1024x768x16 &
+           export DISPLAY=:99
+           python3 main.py
            
       - name: 啟動 x11vnc
         run: |
