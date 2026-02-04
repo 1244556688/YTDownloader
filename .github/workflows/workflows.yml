@@ -17,17 +17,19 @@ jobs:
           sudo apt update
           sudo apt install -y python3 python3-pip ffmpeg  xvfb x11vnc python3-tk
           pip install -r requirements.txt
-      - name: 設定 ngrok token
-        run: ./ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
-        
-      - name: 安裝 ngrok
+      - name: 安裝並啟動 ngrok
         run: |
           wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
           tar xvzf ngrok-v3-stable-linux-amd64.tgz
 
-      - name: 開 ngrok
-        run: |
-           ./ngrok tcp 5900
+          chmod +x ngrok
+
+          ./ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
+
+          ./ngrok tcp 5900 &
+          sleep 5
+
+          curl http://127.0.0.1:4040/api/tunnels
       - name: 啟動虛擬桌面
         run: |
            Xvfb :99 -screen 0 1024x768x16 &
