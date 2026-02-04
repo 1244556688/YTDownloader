@@ -1,0 +1,31 @@
+name: Run GUI Python via VNC
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  gui-python:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 下載程式碼
+        uses: actions/checkout@v4
+
+      - name: 安裝必要套件
+        run: |
+          sudo apt update
+          sudo apt install -y python3 python3-pip ffmpeg  xvfb x11vnc python3-tk
+          pip install -r requirements.txt
+
+      - name: 啟動虛擬桌面
+        run: |
+          Xvfb :99 -screen 0 1024x768x16 &
+          export DISPLAY=:99
+
+      - name: 啟動 x11vnc
+        run: |
+          x11vnc -display :99 -forever -nopw -listen 0.0.0.0 -xkb &
+
+      - name: 執行 GUI Python
+        run: python3 main.py
