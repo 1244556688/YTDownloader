@@ -10,11 +10,11 @@ jobs:
 
     steps:
       # 下載程式碼
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # 安裝 Python
       - name: Setup Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: '3.12'
 
@@ -31,7 +31,7 @@ jobs:
 
       # 上傳 exe 作為 artifact
       - name: Upload EXE
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: YTDownloader-exe
           path: dist/main.exe
