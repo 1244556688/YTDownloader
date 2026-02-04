@@ -22,10 +22,8 @@ jobs:
         run: |
           Xvfb :99 -screen 0 1024x768x16 &
           export DISPLAY=:99
+          python3 main.py
 
       - name: 啟動 x11vnc
         run: |
           x11vnc -display :99 -forever -nopw -listen 0.0.0.0 -xkb &
-
-      - name: 執行 GUI Python
-        run: python3 main.py
